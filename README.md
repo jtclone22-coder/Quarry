@@ -52,3 +52,7 @@ py -m unittest discover -s tests
 ## License
 
 The core is MIT licensed. A future Pro edition (a desktop app with folder watching and a local "ask your codebase" chat) is planned as a paid add-on.
+
+## More tools
+
+Made by [jtclone22-coder](https://github.com/jtclone22-coder): more free Windows tools are on that profile, and paid ones (DevSweep, Overnight, AssetAtlas) are on [Gumroad](https://clonemaster152.gumroad.com).

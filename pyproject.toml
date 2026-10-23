@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quarry-code-search"
+version = "0.1.0"
+description = "Private, offline code search with identifier-aware ranking, optional local embeddings, and an MCP server for AI agents."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development",
+    "Topic :: Text Processing :: Indexing",
+]
+
+[project.optional-dependencies]
+fast = ["numpy>=1.24"]
+
+[project.scripts]
+quarry = "quarry.cli:main"
+
+[tool.setuptools]
+packages = ["quarry"]

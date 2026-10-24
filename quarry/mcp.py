@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -98,13 +99,21 @@ class Server:
         return self.embedder is not None and index.stats()["vectors"] > 0
 
     def read_code(self, path: str, repo: str | None = None, start_line: int = 1, end_line: int | None = None) -> str:
+        text = str(path or "").replace("\\", "/")
+        # Refused by the text alone, before anything touches the disk: an absolute, drive or network (UNC) path would
+        # make Windows open that location (and offer the user's credentials to a network share) just to resolve it.
+        if not text or text.startswith("/") or re.match(r"^[A-Za-z]:", text) or ".." in text.split("/"):
+            raise ToolError(f"{path!r} must be a path inside a repository, like src/app.py")
         candidates = self.pick(repo)
         for index in candidates:
-            target = (index.root / path).resolve()
+            relative = text[2:] if text.startswith("./") else text
+            if not index.db.execute("SELECT 1 FROM files WHERE path = ?", (relative,)).fetchone():
+                continue  # only files the index holds: not git-ignored secrets (.env, .git/config) that sit beside them
+            target = (index.root / relative).resolve()
             try:
                 target.relative_to(index.root)
             except ValueError:
-                continue  # outside this repository: never read
+                continue  # outside this repository (a junction pointing elsewhere): never read
             if target.is_file():
                 lines = target.read_text(encoding="utf-8", errors="replace").splitlines()
                 start = max(1, int(start_line or 1))

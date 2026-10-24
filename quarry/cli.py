@@ -37,7 +37,13 @@ def cmd_index(args) -> int:
 
 def cmd_search(args) -> int:
     registry = load_registry()
-    roots = [str(Path(args.repo).resolve())] if args.repo else list(registry)
+    roots = list(registry)
+    if args.repo:  # only a folder that was indexed on purpose: searching must never add one to what the AI tools can read
+        wanted = os.path.normcase(str(Path(args.repo).resolve()))
+        roots = [root for root in registry if os.path.normcase(root) == wanted]
+        if not roots:
+            print(f"{args.repo} isn't indexed. Index it first: quarry index \"{args.repo}\"", file=sys.stderr)
+            return 1
     if not roots:
         print("Nothing indexed yet. Run: quarry index <folder>", file=sys.stderr)
         return 1

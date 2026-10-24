@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 (2026-10-24)
+
+Fixes from a code review.
+
+- `quarry search --repo <folder>` no longer adds the folder to the index list (which made it readable by the MCP tools); it only searches folders you indexed.
+- `read_code` only reads files the index holds, so git-ignored files such as `.env` beside them can't be read, and absolute, drive and network (UNC) paths are refused before anything touches the disk.
+
 ## 0.1.0 (2026-10-22)
 
 - Incremental indexing into one SQLite file per repository. It respects .gitignore, skips dependencies, build output and binaries, and never follows links.

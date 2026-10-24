@@ -207,6 +207,23 @@ class McpTests(Repo):
             self.assertTrue(result["isError"], path)
             self.assertNotIn("private", result["content"][0]["text"])
 
+    def test_only_indexed_files_can_be_read(self) -> None:
+        server = self.server()
+        for path in ("secrets/key.txt", "debug.txt", "\\\\fileserver\\share\\x.py", "//fileserver/share/x.py", "C:/Windows/win.ini"):
+            result = self.call(server, "read_code", path=path)
+            self.assertTrue(result["isError"], path)                     # git-ignored secrets and network paths: never
+            self.assertNotIn("computeInvoiceTotal secret", result["content"][0]["text"])
+        self.assertFalse(self.call(server, "read_code", path="./src/billing.py")["isError"])
+
+    def test_searching_a_folder_never_adds_it(self) -> None:
+        from quarry import cli
+        self.index()
+        other = Path(self.temp.name) / "Users-home"
+        write(other / "notes.py", "password = 'x'\n")
+        with mock.patch("sys.stderr", io.StringIO()), mock.patch("sys.stdout", io.StringIO()):
+            self.assertEqual(cli.main(["search", "password", "--repo", str(other)]), 1)
+        self.assertNotIn(str(other.resolve()), load_registry(self.home))   # so the AI tools still can't read it
+
     def test_bad_arguments_are_tool_errors_not_crashes(self) -> None:
         server = self.server()
         self.assertTrue(self.call(server, "search_code", query="  ")["isError"])

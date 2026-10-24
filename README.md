@@ -10,7 +10,7 @@
 
 ## Download
 
-Get **Quarry-0.1.0-windows.zip** from [Releases](../../releases/latest) and unzip it anywhere. Quarry is a command-line tool: open a terminal in the Quarry folder and type `Quarry.exe` wherever this page says `py -m quarry`, for example `Quarry.exe index D:\code\my-app`. No Python needed.
+Get **Quarry-0.1.1-windows.zip** from [Releases](../../releases/latest) and unzip it anywhere. Quarry is a command-line tool: open a terminal in the Quarry folder and type `Quarry.exe` wherever this page says `py -m quarry`, for example `Quarry.exe index D:\code\my-app`. No Python needed.
 
 Windows may say "Windows protected your PC" because the app is new: click **More info**, then **Run anyway**.
 
